@@ -14,5 +14,5 @@
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
-, "app/(tabs)/bakery.js", "app/(tabs)/bakery.js"  ]
+, "app/(tabs)/bakery.js", "app/(tabs)/bakery.js", "hooks/useDatePicker.js"  ]
 }

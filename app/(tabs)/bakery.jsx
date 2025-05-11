@@ -2,15 +2,12 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import React, { useMemo, useState } from 'react';
 import {
   Button,
-  Dimensions,
-  ScrollView,
+  Dimensions, Platform, ScrollView,
   Text,
   TouchableOpacity,
   View
 } from 'react-native';
 import { BarChart } from 'react-native-chart-kit';
-
-const screenWidth = Dimensions.get('window').width;
 
 const csvData = [
   ["2025-04-01", "Круассан", "20", "120.0", "2400.0", "5.0", "Нормально"],
@@ -105,32 +102,58 @@ export default function GraphsScreen() {
       <View style={{ marginVertical: 10 }}>
         <Text>Фильтр по дате:</Text>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Button title={`С: ${startDate.toISOString().slice(0, 10)}`} onPress={() => setShowStart(true)} />
-          <Text style={{ marginHorizontal: 10 }}>—</Text>
-          <Button title={`По: ${endDate.toISOString().slice(0, 10)}`} onPress={() => setShowEnd(true)} />
+
+          {Platform.select({
+            web: (
+              <>
+                <input
+                  type="date"
+                  value={startDate.toISOString().slice(0, 10)}
+                  onChange={(e) => setStartDate(new Date(e.target.value))}
+                  style={{ padding: 10, margin: 5, borderWidth: 1, borderRadius: 4 }}
+                />
+                <Text style={{ marginHorizontal: 10 }}>—</Text>
+                <input
+                  type="date"
+                  value={endDate.toISOString().slice(0, 10)}
+                  onChange={(e) => setEndDate(new Date(e.target.value))}
+                  style={{ padding: 10, margin: 5, borderWidth: 1, borderRadius: 4 }}
+                />
+              </>
+            ),
+            default: (
+              <>
+                <Button title={`С: ${startDate.toISOString().slice(0, 10)}`} onPress={() => setShowStart(true)} />
+                <Text style={{ marginHorizontal: 10 }}>—</Text>
+                <Button title={`По: ${endDate.toISOString().slice(0, 10)}`} onPress={() => setShowEnd(true)} />
+
+                {showStart && (
+                  <DateTimePicker
+                    value={startDate}
+                    mode="date"
+                    display="default"
+                    onChange={(event, selectedDate) => {
+                      setShowStart(false);
+                      if (selectedDate) setStartDate(selectedDate);
+                    }}
+                  />
+                )}
+                {showEnd && (
+                  <DateTimePicker
+                    value={endDate}
+                    mode="date"
+                    display="default"
+                    onChange={(event, selectedDate) => {
+                      setShowEnd(false);
+                      if (selectedDate) setEndDate(selectedDate);
+                    }}
+                  />
+                )}
+              </>
+            )
+          })}
+
         </View>
-        {showStart && (
-          <DateTimePicker
-            value={startDate}
-            mode="date"
-            display="default"
-            onChange={(event, selectedDate) => {
-              setShowStart(false);
-              if (selectedDate) setStartDate(selectedDate);
-            }}
-          />
-        )}
-        {showEnd && (
-          <DateTimePicker
-            value={endDate}
-            mode="date"
-            display="default"
-            onChange={(event, selectedDate) => {
-              setShowEnd(false);
-              if (selectedDate) setEndDate(selectedDate);
-            }}
-          />
-        )}
       </View>
 
       {/* Кнопки переключения режима */}
